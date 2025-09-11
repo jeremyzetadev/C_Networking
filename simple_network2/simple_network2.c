@@ -1,11 +1,47 @@
 #include <netinet/in.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <unistd.h>
+
+static void server_mypublicIP(){
+    int server_fd;
+    struct sockaddr_in s_address;
+    int port = 8080; // The port you want to bind to
+    const char *public_ip = "YOUR_PUBLIC_IP_ADDRESS"; // Replace with your actual public IP
+
+    // 1. Create socket file descriptor
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror("socket failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // 2. Prepare the sockaddr_in structure
+    s_address.sin_family = AF_INET;
+    s_address.sin_addr.s_addr = inet_addr(public_ip); // Convert IP string to network address
+    s_address.sin_port = htons(port); // Convert port to network byte order
+    
+    // 3. Bind the socket to the specified IP and port
+    if (bind(server_fd, (struct sockaddr *)&s_address, sizeof(s_address)) < 0) {
+        perror("bind failed");
+        close(server_fd); // Close the socket on error
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Socket successfully bound to %s:%d\n", public_ip, port);
+
+    // Further server logic (listen, accept, etc.) setup here
+    // 
+    // 
+    // 
+    // Further server logic (listen, accept, etc.) setup here
+
+    close(server_fd); // Close the socket when done
+}
 
 static void server(){
     // create socket (file descriptor)
